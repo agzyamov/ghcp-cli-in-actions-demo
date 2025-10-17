@@ -1,0 +1,28 @@
+# Ignore Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# GitHub Actions artifacts (keep in git)
+# response.md
+# responses/
+
+# Don't ignore generated code - we want to see it!
+# generated/
