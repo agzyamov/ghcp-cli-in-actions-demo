@@ -79,11 +79,15 @@ jobs:
           TIMESTAMP=$(date +%Y%m%d_%H%M%S)
           cp response.md "responses/response_${TIMESTAMP}.md"
           
+          # Switch to copilot-responses branch (create if doesn't exist)
+          git fetch origin copilot-responses:copilot-responses 2>/dev/null || git checkout -b copilot-responses
+          git checkout copilot-responses || git checkout -b copilot-responses
+          
           git add response.md "responses/response_${TIMESTAMP}.md"
           git commit -m "Add Copilot response: ${{ github.event.inputs.question }}"
-          git push
+          git push -u origin copilot-responses
           
-          echo "✅ Response committed to repository"
+          echo "✅ Response committed to branch: copilot-responses"
       
       - name: Upload as Artifact
         uses: actions/upload-artifact@v4
@@ -97,8 +101,10 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Question:** ${{ github.event.inputs.question }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** \`copilot-responses\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Files created:**" >> $GITHUB_STEP_SUMMARY
           echo "- \`response.md\` (root directory)" >> $GITHUB_STEP_SUMMARY
           echo "- \`responses/response_$(date +%Y%m%d_%H%M%S).md\` (archived copy)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Download artifact or check the committed files." >> $GITHUB_STEP_SUMMARY
+          echo "All responses are stored in the \`copilot-responses\` branch." >> $GITHUB_STEP_SUMMARY
