@@ -20,6 +20,24 @@ ENV/
 .DS_Store
 Thumbs.db
 
+# Security - Never commit these!
+*.pem
+*.key
+*.env
+.env.local
+.env.*.local
+secrets.yml
+secrets.yaml
+config/secrets.*
+*.secret
+
+# Credentials and tokens
+credentials.json
+token.json
+.credentials/
+.aws/
+.ssh/
+
 # GitHub Actions artifacts (keep in git)
 # response.md
 # responses/

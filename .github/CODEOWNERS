@@ -1,0 +1,17 @@
+# CODEOWNERS
+# These owners will be the default owners for everything in the repo.
+# Unless a later match takes precedence, they will be requested for
+# review when someone opens a pull request.
+
+# Global owners
+* @agzyamov
+
+# GitHub Actions workflows
+/.github/workflows/ @agzyamov
+
+# Security-related files
+/SECURITY.md @agzyamov
+/.github/dependabot.yml @agzyamov
+
+# Documentation
+*.md @agzyamov
