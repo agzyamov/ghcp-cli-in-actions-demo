@@ -48,17 +48,25 @@ Your fork will work independently with your own Copilot access and responses.
 
 ### 2. Add Secrets (Repository Owner Only)
 
-The repository owner needs to create a Personal Access Token with Copilot access:
+**Important**: GitHub Copilot CLI requires a regular GitHub Personal Access Token (PAT) with the `copilot` scope - it does NOT require a separate Copilot-specific token. The PAT allows the CLI to access GitHub Copilot on behalf of your account.
 
-1. Create a [Personal Access Token](https://github.com/settings/tokens/new) with these scopes:
-   - `repo` (Full control of private repositories)
-   - `copilot` (Access to Copilot features)
+**Prerequisites:**
+- Active GitHub Copilot subscription for your GitHub account
+- Eligible plans: **Copilot Free**, **Copilot Pro**, **Copilot Pro+**, **Copilot Business**, or **Copilot Enterprise**
+- For Free/Pro plans: [Sign up here](https://github.com/features/copilot)
+- For organizations: Must be assigned Copilot access by your organization admin
 
-2. Add to repository secrets as `COPILOT_TOKEN`:
+**Setup steps:**
+
+1. Create a [Personal Access Token (classic)](https://github.com/settings/tokens/new) with these scopes:
+   - `repo` (Full control of private repositories) - *required for repository access*
+   - `copilot` (GitHub Copilot) - **required to use Copilot API**
+
+2. Add the token to repository secrets as `COPILOT_TOKEN`:
    ```
    Settings → Secrets and variables → Actions → New repository secret
    Name: COPILOT_TOKEN
-   Value: <your-token>
+   Value: <your-PAT-token>
    ```
 
 > **Security Note**: Only repository owners/admins can add secrets. Contributors cannot override the configured token due to branch protection and secret permissions.
