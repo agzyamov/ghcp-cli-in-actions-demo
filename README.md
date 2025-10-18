@@ -273,9 +273,20 @@ The **Microsoft Learn MCP Server** provides Copilot Agent with access to officia
 
 #### Step 1: Add MCP Configuration
 
-1. Go to your repository on GitHub.com
-2. Navigate to `Settings` → `Code & automation` → `Copilot` → `Coding agent`
-3. In the **MCP configuration** section, add the following JSON:
+**⚠️ Important:** This configuration is added in **repository settings**, not your personal settings!
+
+1. **Go to your repository** on GitHub.com:
+   ```
+   https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/settings/copilot
+   ```
+   Example: `https://github.com/agzyamov/ghcp-cli-in-actions-demo/settings/copilot`
+
+2. In the left sidebar under **"Code & automation"**, click:
+   - `Copilot` → `Coding agent`
+
+3. Scroll down to the **"MCP configuration"** section (you'll see a text editor)
+
+4. Replace the default `{ "mcpServers": {} }` with the following JSON:
 
 ```json
 {
@@ -289,7 +300,19 @@ The **Microsoft Learn MCP Server** provides Copilot Agent with access to officia
 }
 ```
 
-4. Click **Save**
+5. Click **Save** button at the bottom
+6. GitHub will validate the JSON syntax automatically
+
+**Screenshot guide:**
+```
+Repository → Settings (tab at top)
+  └── Left sidebar: "Code & automation" section
+      └── Copilot
+          └── Coding agent
+              └── Scroll to "MCP configuration" text editor
+                  └── Paste the JSON above
+                      └── Click Save
+```
 
 This configuration enables all tools from the Microsoft Learn MCP Server:
 - `microsoft_docs_search` - Search Microsoft documentation
@@ -348,6 +371,41 @@ You can add multiple MCP servers for different purposes:
 1. Create a `copilot` environment in repository settings
 2. Add secrets with `COPILOT_MCP_` prefix
 3. Reference them in the MCP configuration `env` section
+
+#### Quick Setup for This Repository
+
+For this specific repository (`agzyamov/ghcp-cli-in-actions-demo`):
+
+1. **Direct link to settings:**
+   ```
+   https://github.com/agzyamov/ghcp-cli-in-actions-demo/settings/copilot
+   ```
+
+2. **MCP Configuration to add:**
+   ```json
+   {
+     "mcpServers": {
+       "mslearn": {
+         "type": "http",
+         "url": "https://learn.microsoft.com/api/mcp",
+         "tools": ["*"]
+       }
+     }
+   }
+   ```
+
+3. **Test command:**
+   ```bash
+   gh workflow run copilot-agent-task.yml \
+     -f task_description="Create a Python Azure Function with HTTP trigger following Microsoft official documentation" \
+     -f base_branch="main"
+   ```
+
+4. **Verify MCP is working:**
+   - Wait for agent to create a PR
+   - Click "View session" in the PR timeline
+   - Look for "Start MCP Servers" step in logs
+   - You should see `mslearn` server with 3 tools loaded
 
 #### Resources
 
