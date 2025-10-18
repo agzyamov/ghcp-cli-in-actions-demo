@@ -225,15 +225,44 @@ The agent creates a pull request with detailed description:
 **Ready for review!**
 ```
 
-## � Using MCP Servers with Coding Agent
+## 🔌 Using MCP Servers with Coding Agent
 
 ### What are MCP Servers?
 
 Model Context Protocol (MCP) servers extend the Copilot Agent's capabilities by providing access to external tools and data sources. This enables more accurate and context-aware code generation.
 
+### Setup: Microsoft Learn MCP Server for This Repository
+
+**Step 1: Add MCP Configuration**
+
+1. Open: https://github.com/agzyamov/ghcp-cli-in-actions-demo/settings/copilot
+2. Navigate to `Coding agent` in the left sidebar
+3. In the "MCP configuration" text editor, paste:
+   ```json
+   {
+     "mcpServers": {
+       "mslearn": {
+         "type": "http",
+         "url": "https://learn.microsoft.com/api/mcp",
+         "tools": ["*"]
+       }
+     }
+   }
+   ```
+4. Click **Save**
+
+**Step 2: Test the Configuration**
+
+Run this command to test MCP integration:
+```bash
+gh workflow run copilot-agent-task.yml \
+  -f task_description="Create a Python Azure Function with HTTP trigger following Microsoft documentation" \
+  -f base_branch="main"
+```
+
 ### Example: Microsoft Learn MCP Server
 
-When you configure the **Microsoft Learn MCP Server** (see [README](README.md#-extending-copilot-agent-with-mcp-servers)), the Copilot Agent can:
+When you configure the **Microsoft Learn MCP Server**, the Copilot Agent can:
 - Search official Microsoft documentation
 - Fetch complete documentation pages
 - Find official Microsoft/Azure code samples
