@@ -66,23 +66,39 @@ gh workflow run copilot-qa.yml \
 
 Before using the Coding Agent, ensure you have:
 - GitHub Copilot Business or Enterprise subscription
-- Properly configured `COPILOT_OAUTH_TOKEN` secret (see setup options below)
+- Properly configured `COPILOT_OAUTH_TOKEN` secret (Personal OAuth Token from `gh auth login`)
 - GitHub CLI 2.80.0+ in the runner environment
 
-### Token Setup Options
+### Token Requirements
 
-#### OAuth Application (Recommended)
-- ✅ Best security and scalability
-- ✅ Application-specific permissions
-- ✅ Better auditability and team workflows
-- ✅ Independent of individual user accounts
+**Important:** Copilot Agent requires a **Personal OAuth Token**, not a Personal Access Token (PAT).
 
-#### Personal OAuth Token (Alternative)
-- ⚠️ Use only when OAuth apps cannot be created
-- ❌ Security risks: tied to personal account
-- ❌ Limited scalability for team usage
-- ❌ Actions appear under personal name
-- ❌ Token expires with account changes
+| Token Type | Works for Agent? | How to Get |
+|------------|------------------|------------|
+| **Personal OAuth Token** | ✅ **YES** | `gh auth login` → `gh auth token` |
+| **Personal Access Token (Classic)** | ❌ **NO** | Works only for Copilot CLI Q&A |
+| **Fine-grained PAT** | ❌ **NO** | Works only for Copilot CLI Q&A |
+| **OAuth App Token** | ❌ **NO** | Not supported |
+| **GitHub App Token** | ❌ **NO** | Not supported |
+
+**To get Personal OAuth Token:**
+```bash
+gh auth login  # Complete OAuth flow in browser
+               # GitHub will request these scopes during OAuth:
+               # - repo (repository access)
+               # - read:org (organization membership)
+               # - workflow (workflow updates)
+               # - read:user, user:email (user info)
+               
+gh auth token  # Copy the token (starts with gho_)
+```
+
+**OAuth Token Scopes** (automatically granted during `gh auth login`):
+- ✅ `repo` - Full control of repositories
+- ✅ `read:org` - Read organization and team membership
+- ✅ `workflow` - Update GitHub Action workflows
+- ✅ `read:user` - Read user profile data
+- ✅ `user:email` - Access user email addresses
 
 ### How to Run
 

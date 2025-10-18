@@ -75,76 +75,88 @@ Your fork will work independently with your own Copilot access and responses.
 
 #### For Copilot Coding Agent (`COPILOT_OAUTH_TOKEN`)
 
-**Important**: GitHub Copilot Coding Agent requires an OAuth token for autonomous operation. This token allows the agent to create branches, commit code, and open pull requests.
+**Important**: GitHub Copilot Coding Agent requires a **Personal OAuth Token** generated through GitHub CLI authentication flow. This is different from a Personal Access Token (PAT).
 
 **Prerequisites:**
 - GitHub Copilot Business or Enterprise subscription
 - Organization must have Copilot Agent features enabled
+- GitHub CLI installed locally to generate the token
 
-**Setup Options:**
+**⚠️ Token Types Explained:**
 
-##### Option 1: OAuth Application (Recommended)
+| Token Type | For Copilot CLI (Q&A) | For Copilot Agent | How to Get |
+|------------|----------------------|-------------------|------------|
+| **Personal Access Token (Classic)** | ✅ **YES** | ❌ **NO** | github.com/settings/tokens |
+| **Personal OAuth Token** | ❌ **NO** | ✅ **YES** | `gh auth login` command |
+| **Fine-grained PAT** | ✅ Maybe | ❌ **NO** | github.com/settings/tokens |
+| **OAuth App Token** | ❌ **NO** | ❌ **NO** | N/A |
+| **GitHub App Token** | ❌ **NO** | ❌ **NO** | N/A |
 
-**Best for:** Organizations with multiple repositories and users
+**Setup: Personal OAuth Token (Required for Agent)**
 
-1. Create an OAuth application in your GitHub organization:
-   - Go to `Organization Settings` → `Developer settings` → `OAuth Apps` → `New OAuth App`
-   - Set the callback URL to your repository or organization
-   - Note the Client ID and generate a Client Secret
+**Use:** Required for GitHub Copilot Agent workflow
 
-2. Generate an OAuth token with appropriate scopes:
-   - `repo` (Full control of repositories)
-   - `pull_requests:write` (Create and manage pull requests)
-   - `contents:write` (Create and modify repository contents)
+1. **Generate Personal OAuth Token locally** using GitHub CLI:
+   ```bash
+   # Login to GitHub CLI with OAuth flow
+   gh auth login
+   
+   # Select:
+   # - GitHub.com
+   # - HTTPS
+   # - Login with a web browser
+   # - Complete OAuth flow in browser
+   
+   # During OAuth flow, GitHub will request these scopes:
+   # ✅ repo (Full control of private repositories)
+   # ✅ read:org (Read org and team membership)
+   # ✅ workflow (Update GitHub Action workflows)
+   # ✅ read:user (Read user profile data)
+   # ✅ user:email (Access user email addresses)
+   
+   # View your OAuth token
+   gh auth token
+   ```
 
-3. Add the token to repository secrets as `COPILOT_OAUTH_TOKEN`:
+2. **Copy the OAuth token** (starts with `gho_`)
+   - This token has all necessary scopes from OAuth flow
+   - Automatically includes `repo`, `read:org`, `workflow` and other required permissions
+   - These scopes are granted during the browser OAuth authorization
+
+3. **Add the token to repository secrets** as `COPILOT_OAUTH_TOKEN`:
    ```
    Settings → Secrets and variables → Actions → New repository secret
    Name: COPILOT_OAUTH_TOKEN
-   Value: <your-oauth-token>
+   Value: <your-oauth-token-from-gh-auth-token>
    ```
 
-##### Option 2: Personal OAuth Token (Alternative)
+**⚠️ Why Personal Access Tokens (PAT) Don't Work for Agent:**
 
-**Use when:** Cannot create OAuth applications due to organization restrictions
+**Personal Access Token (Classic):**
+- Works for Copilot CLI Q&A workflow
+- Does NOT work for `gh agent-task` command
+- Missing OAuth-specific authentication mechanism
+- `gh auth login --with-token` with PAT lacks full OAuth scopes
 
-**⚠️ Limitations compared to OAuth Apps:**
-- **Security**: Tied to personal account, harder to rotate and manage
-- **Permissions**: Uses your personal permissions, not application-specific
-- **Auditability**: Actions appear under your name, not as application
-- **Scalability**: Doesn't work well for team/organization workflows
-- **Lifecycle**: Token becomes invalid if you leave organization or account is suspended
-- **Rate limits**: Shares rate limits with your personal GitHub usage
+**Personal OAuth Token (from `gh auth login`):**
+- Generated through official GitHub CLI OAuth flow
+- Has all necessary scopes and permissions
+- Works with `gh agent-task` command
+- Properly authenticated for autonomous agent operations
 
-**Setup steps:**
+**OAuth Applications & GitHub Apps:**
+- Not designed for this use case
+- Missing required authentication flows
+- Cannot be used with `gh auth login`
 
-1. Create a [Personal Access Token (fine-grained)](https://github.com/settings/tokens?type=beta) with these permissions:
-   - Repository access: Select specific repositories or organization
-   - **Repository permissions:**
-     - Contents: Read and write
-     - Metadata: Read
-     - Pull requests: Write
-     - Issues: Write (optional, for linking)
-   - **Account permissions:**
-     - Git SSH keys: Write (if needed)
-
-2. **Alternative:** Create a [Personal Access Token (classic)](https://github.com/settings/tokens/new) with these scopes:
-   - `repo` (Full control of private repositories)
-   - `workflow` (Update GitHub Action workflows)
-
-3. Add the token to repository secrets as `COPILOT_OAUTH_TOKEN`:
-   ```
-   Settings → Secrets and variables → Actions → New repository secret
-   Name: COPILOT_OAUTH_TOKEN
-   Value: <your-personal-oauth-token>
-   ```
-
-**⚠️ Important Notes for Personal Tokens:**
-- Token format should start with `github_pat_` (fine-grained) or `ghp_` (classic)
-- Consider creating a dedicated service account for better separation
-- Regularly rotate tokens for security
-- Document token ownership and renewal process
+**✅ Best Practices for OAuth Tokens:**
+- Token format starts with `gho_` (OAuth token)
+- Generate using `gh auth login` command
+- Tokens expire based on GitHub settings (typically 90 days)
+- Regularly refresh tokens using `gh auth refresh`
+- Consider creating a dedicated service account
 - Monitor token usage in audit logs
+- Keep tokens secure - never commit to repository
 
 > **Security Note**: Only repository owners/admins can add secrets. Contributors cannot override the configured tokens due to branch protection and secret permissions.
 
@@ -383,7 +395,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ### Coding Agent Issues
 
 #### Workflow fails with "COPILOT_OAUTH_TOKEN not found"
-- Ensure you've created an OAuth token with appropriate scopes
+- Ensure you've created a Personal OAuth Token using `gh auth login`
 - Add it as a secret named `COPILOT_OAUTH_TOKEN` in repository settings
 - OAuth token must start with `gho_` prefix
 
@@ -397,17 +409,28 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Check agent logs artifact for error details
 - Some tasks may not require code changes
 
-#### OAuth authentication fails
-- Verify OAuth token has correct scopes (`repo`, `pull_requests:write`, `contents:write`)
-- Check if token is expired or revoked
-- Ensure organization has Copilot Agent features enabled
-- **For Personal OAuth Tokens**: Verify token format (`github_pat_` or `ghp_` prefix)
-- **For OAuth Apps**: Confirm app has necessary permissions and callback URL is correct
+#### Token authentication fails - "Not a valid OAuth token"
+- **Most common issue**: Using Personal Access Token (PAT) instead of Personal OAuth Token
+- **Solution**: Generate OAuth token using `gh auth login` command, then get token with `gh auth token`
+- ❌ PAT (starts with `ghp_` or `github_pat_`) - **doesn't work for Agent**
+- ✅ OAuth token (starts with `gho_`) - **required for Agent**
+- Personal Access Tokens work for Copilot CLI Q&A, but NOT for Copilot Agent
 
-#### "Token does not appear to be an OAuth token"
-- OAuth tokens should start with `gho_` (OAuth app) or `github_pat_`/`ghp_` (personal)
-- Don't use Personal Access Tokens with `copilot` scope (those are for CLI, not Agent)
-- Regenerate token if format is incorrect
+#### "gh auth login --with-token" fails
+- Cannot use `gh auth login --with-token` with Personal Access Token
+- PAT lacks full OAuth authentication mechanism required by `gh agent-task`
+- **Solution**: Use interactive `gh auth login` with browser OAuth flow:
+  ```bash
+  gh auth login  # Select GitHub.com, HTTPS, login with browser
+  gh auth token  # Copy this token for COPILOT_OAUTH_TOKEN secret
+  ```
+
+#### Why doesn't my PAT work for the Agent?
+- Copilot CLI (Q&A) uses PAT with `copilot` scope ✅
+- Copilot Agent uses OAuth token from `gh auth login` flow ✅
+- These are **different authentication mechanisms**
+- PAT = Personal Access Token (created manually on github.com)
+- OAuth Token = Generated through GitHub CLI OAuth flow (via `gh auth login`)
 
 ### General Issues
 
