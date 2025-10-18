@@ -33,10 +33,16 @@ Want to experiment with this demo? Fork the repository:
 
 1. Click the **Fork** button at the top of this page
 2. In your fork, go to `Settings` → `Actions` → `General` → Enable "Read and write permissions"
-3. Create your own `COPILOT_TOKEN` secret (requires GitHub Copilot subscription)
-4. Run the workflow: `gh workflow run copilot-qa.yml -f question="Your question here"`
+3. **Create tokens** (requires GitHub Copilot subscription):
+   - **For Q&A workflow:** Create `COPILOT_TOKEN` - [Personal Access Token](https://github.com/settings/tokens/new) with `copilot` scope
+   - **For Coding Agent workflow:** Create `COPILOT_OAUTH_TOKEN` - Personal OAuth Token from `gh auth login` → `gh auth token`
+4. Add tokens to your fork's secrets: `Settings` → `Secrets and variables` → `Actions` → `New repository secret`
+5. **Try Q&A workflow:** `gh workflow run copilot-qa.yml -f question="Your question here"`
+6. **Try Coding Agent:** `gh workflow run copilot-agent-task.yml -f task_description="Create a simple calculator function"`
 
 Your fork will work independently with your own Copilot access and responses.
+
+> **Note:** Q&A and Coding Agent workflows require **different token types**. See [token setup documentation](#2-add-secrets-repository-owner-only) for details.
 
 ### For Repository Owners: Initial Setup
 
