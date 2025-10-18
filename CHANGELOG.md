@@ -23,10 +23,23 @@ Added GitHub Copilot Coding Agent support alongside existing CLI Q&A functionali
 - OAuth token with appropriate permissions (`COPILOT_OAUTH_TOKEN` secret)
 - GitHub Copilot Business or Enterprise subscription
 
-### Token Options
-- **OAuth Application** (recommended): Best security and team workflows
-- **Personal OAuth Token** (alternative): For cases where OAuth apps cannot be created
-  - ⚠️ **Limitations**: Security risks, limited scalability, tied to personal account
+### Token Requirements
+
+**Important:** Copilot Agent requires **Personal OAuth Token** (from `gh auth login`), NOT Personal Access Token (PAT).
+
+| Token Type | Copilot Q&A | Copilot Agent | How to Get |
+|------------|-------------|---------------|------------|
+| **Personal Access Token (Classic)** | ✅ YES | ❌ NO | github.com/settings/tokens |
+| **Personal OAuth Token** | ❌ NO | ✅ YES | `gh auth login` → `gh auth token` |
+| Fine-grained PAT | ✅ Maybe | ❌ NO | github.com/settings/tokens |
+| OAuth App Token | ❌ NO | ❌ NO | Not supported |
+| GitHub App Token | ❌ NO | ❌ NO | Not supported |
+
+**Why Different Tokens?**
+- **Q&A Workflow**: Works with PAT + `copilot` scope
+- **Agent Workflow**: Requires OAuth token from `gh auth login` flow (starts with `gho_`)
+  - PAT doesn't work because `gh agent-task` needs full OAuth authentication
+  - OAuth token automatically includes all necessary scopes
 
 ### Usage Examples
 ```bash
