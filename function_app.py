@@ -42,7 +42,8 @@ def process_request(req: func.HttpRequest) -> func.HttpResponse:
         if not name:
             try:
                 req_body = req.get_json()
-                name = req_body.get('name')
+                if req_body:
+                    name = req_body.get('name')
             except ValueError as ve:
                 logging.warning(f'Invalid JSON in request body: {ve}')
                 # If JSON parsing fails but name wasn't in query, it's okay
