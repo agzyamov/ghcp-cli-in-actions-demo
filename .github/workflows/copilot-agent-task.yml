@@ -39,11 +39,18 @@ jobs:
           echo "🔐 Verifying OAuth token..."
           TOKEN="${{ secrets.COPILOT_OAUTH_TOKEN }}"
           
-          # Check token format (should start with gho_)
+          # Check token format (OAuth app tokens start with gho_, personal tokens with github_pat_ or ghp_)
           if [[ "$TOKEN" == gho_* ]]; then
-            echo "✅ OAuth token detected"
+            echo "✅ OAuth App token detected"
+          elif [[ "$TOKEN" == github_pat_* ]]; then
+            echo "✅ Personal OAuth token (fine-grained) detected"
+            echo "⚠️  Note: Personal tokens have limitations compared to OAuth Apps"
+          elif [[ "$TOKEN" == ghp_* ]]; then
+            echo "✅ Personal OAuth token (classic) detected"
+            echo "⚠️  Note: Personal tokens have limitations compared to OAuth Apps"
           else
             echo "❌ ERROR: Token does not appear to be an OAuth token"
+            echo "Expected format: gho_* (OAuth app) or github_pat_*/ghp_* (personal)"
             exit 1
           fi
           

@@ -23,6 +23,11 @@ Added GitHub Copilot Coding Agent support alongside existing CLI Q&A functionali
 - OAuth token with appropriate permissions (`COPILOT_OAUTH_TOKEN` secret)
 - GitHub Copilot Business or Enterprise subscription
 
+### Token Options
+- **OAuth Application** (recommended): Best security and team workflows
+- **Personal OAuth Token** (alternative): For cases where OAuth apps cannot be created
+  - ⚠️ **Limitations**: Security risks, limited scalability, tied to personal account
+
 ### Usage Examples
 ```bash
 # Feature development

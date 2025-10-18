@@ -62,6 +62,28 @@ gh workflow run copilot-qa.yml \
 
 ## 🤖 Copilot Coding Agent Examples
 
+### Prerequisites
+
+Before using the Coding Agent, ensure you have:
+- GitHub Copilot Business or Enterprise subscription
+- Properly configured `COPILOT_OAUTH_TOKEN` secret (see setup options below)
+- GitHub CLI 2.80.0+ in the runner environment
+
+### Token Setup Options
+
+#### OAuth Application (Recommended)
+- ✅ Best security and scalability
+- ✅ Application-specific permissions
+- ✅ Better auditability and team workflows
+- ✅ Independent of individual user accounts
+
+#### Personal OAuth Token (Alternative)
+- ⚠️ Use only when OAuth apps cannot be created
+- ❌ Security risks: tied to personal account
+- ❌ Limited scalability for team usage
+- ❌ Actions appear under personal name
+- ❌ Token expires with account changes
+
 ### How to Run
 
 ```bash

@@ -80,9 +80,12 @@ Your fork will work independently with your own Copilot access and responses.
 **Prerequisites:**
 - GitHub Copilot Business or Enterprise subscription
 - Organization must have Copilot Agent features enabled
-- Access to create OAuth applications in your organization
 
-**Setup steps:**
+**Setup Options:**
+
+##### Option 1: OAuth Application (Recommended)
+
+**Best for:** Organizations with multiple repositories and users
 
 1. Create an OAuth application in your GitHub organization:
    - Go to `Organization Settings` → `Developer settings` → `OAuth Apps` → `New OAuth App`
@@ -100,6 +103,48 @@ Your fork will work independently with your own Copilot access and responses.
    Name: COPILOT_OAUTH_TOKEN
    Value: <your-oauth-token>
    ```
+
+##### Option 2: Personal OAuth Token (Alternative)
+
+**Use when:** Cannot create OAuth applications due to organization restrictions
+
+**⚠️ Limitations compared to OAuth Apps:**
+- **Security**: Tied to personal account, harder to rotate and manage
+- **Permissions**: Uses your personal permissions, not application-specific
+- **Auditability**: Actions appear under your name, not as application
+- **Scalability**: Doesn't work well for team/organization workflows
+- **Lifecycle**: Token becomes invalid if you leave organization or account is suspended
+- **Rate limits**: Shares rate limits with your personal GitHub usage
+
+**Setup steps:**
+
+1. Create a [Personal Access Token (fine-grained)](https://github.com/settings/tokens?type=beta) with these permissions:
+   - Repository access: Select specific repositories or organization
+   - **Repository permissions:**
+     - Contents: Read and write
+     - Metadata: Read
+     - Pull requests: Write
+     - Issues: Write (optional, for linking)
+   - **Account permissions:**
+     - Git SSH keys: Write (if needed)
+
+2. **Alternative:** Create a [Personal Access Token (classic)](https://github.com/settings/tokens/new) with these scopes:
+   - `repo` (Full control of private repositories)
+   - `workflow` (Update GitHub Action workflows)
+
+3. Add the token to repository secrets as `COPILOT_OAUTH_TOKEN`:
+   ```
+   Settings → Secrets and variables → Actions → New repository secret
+   Name: COPILOT_OAUTH_TOKEN
+   Value: <your-personal-oauth-token>
+   ```
+
+**⚠️ Important Notes for Personal Tokens:**
+- Token format should start with `github_pat_` (fine-grained) or `ghp_` (classic)
+- Consider creating a dedicated service account for better separation
+- Regularly rotate tokens for security
+- Document token ownership and renewal process
+- Monitor token usage in audit logs
 
 > **Security Note**: Only repository owners/admins can add secrets. Contributors cannot override the configured tokens due to branch protection and secret permissions.
 
@@ -356,6 +401,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Verify OAuth token has correct scopes (`repo`, `pull_requests:write`, `contents:write`)
 - Check if token is expired or revoked
 - Ensure organization has Copilot Agent features enabled
+- **For Personal OAuth Tokens**: Verify token format (`github_pat_` or `ghp_` prefix)
+- **For OAuth Apps**: Confirm app has necessary permissions and callback URL is correct
+
+#### "Token does not appear to be an OAuth token"
+- OAuth tokens should start with `gho_` (OAuth app) or `github_pat_`/`ghp_` (personal)
+- Don't use Personal Access Tokens with `copilot` scope (those are for CLI, not Agent)
+- Regenerate token if format is incorrect
 
 ### General Issues
 
