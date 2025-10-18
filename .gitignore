@@ -44,3 +44,11 @@ token.json
 
 # Don't ignore generated code - we want to see it!
 # generated/
+
+# Azure Functions
+.python_packages/
+__azurite_db*__.json
+__blobstorage__
+__queuestorage__
+bin/
+obj/
