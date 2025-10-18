@@ -108,6 +108,44 @@ gh workflow run copilot-agent-task.yml \
 - **Organization Settings**: Admin must enable Copilot Agent features
 - **Security**: All tokens are stored as encrypted repository secrets
 
+## 🔌 Extending with MCP Servers
+
+### Model Context Protocol (MCP) Support
+
+GitHub Copilot Coding Agent can be extended with MCP servers to access external tools and data sources during code generation.
+
+**Recommended: Microsoft Learn MCP Server**
+- Access to official Microsoft documentation
+- Real-time code samples from Microsoft Learn
+- Semantic search across Microsoft/Azure docs
+- Reduced hallucinations on Microsoft APIs
+
+**Setup:**
+1. Navigate to repository `Settings` → `Copilot` → `Coding agent`
+2. Add MCP configuration in JSON format:
+```json
+{
+  "mcpServers": {
+    "mslearn": {
+      "type": "http",
+      "url": "https://learn.microsoft.com/api/mcp",
+      "tools": ["*"]
+    }
+  }
+}
+```
+3. Agent automatically uses MCP tools during code generation
+
+**Benefits:**
+- ✅ Agent accesses up-to-date official documentation
+- ✅ Code follows Microsoft best practices from official sources
+- ✅ Better quality for Microsoft/Azure technology implementations
+- ✅ Reduced errors from outdated training data
+
+**Resources:**
+- [Extending Copilot Agent with MCP](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/extend-coding-agent-with-mcp)
+- [Microsoft Learn MCP Server](https://github.com/MicrosoftDocs/mcp)
+
 ## 🎉 Benefits
 
 - **Accelerated Development**: From research to implementation in automated workflows
@@ -115,6 +153,7 @@ gh workflow run copilot-agent-task.yml \
 - **Knowledge Preservation**: Q&A responses create lasting documentation
 - **Code Review Integration**: Agent PRs fit into existing review processes
 - **Flexible Usage**: Choose the right tool for each task
+- **Extended Capabilities**: MCP servers provide real-time access to external knowledge
 
 ---
 

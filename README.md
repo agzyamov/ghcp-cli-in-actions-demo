@@ -243,7 +243,119 @@ gh workflow run copilot-agent-task.yml \
 6. 🔄 **Review**: Opens PR for human review and feedback
 7. 🔁 **Iteration**: Can continue working based on review feedback
 
-## 📁 Project Structure
+## � Extending Copilot Agent with MCP Servers
+
+GitHub Copilot Coding Agent can be extended with Model Context Protocol (MCP) servers to give it access to additional tools and data sources during autonomous code generation.
+
+### What is MCP?
+
+Model Context Protocol (MCP) allows AI agents to connect to external tools, APIs, and data sources. This enables the Copilot Agent to:
+- Access real-time documentation
+- Query external APIs and services
+- Use specialized tools for code analysis
+- Integrate with your development infrastructure
+
+### Recommended: Microsoft Learn MCP Server
+
+The **Microsoft Learn MCP Server** provides Copilot Agent with access to official Microsoft documentation, including:
+- 📚 Semantic search across Microsoft Learn documentation
+- 💻 Official Microsoft/Azure code samples
+- 🔍 Full documentation page fetching
+- ⚡ Real-time updates from Microsoft Learn
+
+**Benefits for Copilot Agent:**
+- Agent can verify best practices from official docs
+- Access to up-to-date Microsoft/Azure examples
+- Better quality code generation for Microsoft technologies
+- Reduced hallucinations on Microsoft-specific APIs
+
+### Setting Up MCP Servers for Copilot Agent
+
+#### Step 1: Add MCP Configuration
+
+1. Go to your repository on GitHub.com
+2. Navigate to `Settings` → `Code & automation` → `Copilot` → `Coding agent`
+3. In the **MCP configuration** section, add the following JSON:
+
+```json
+{
+  "mcpServers": {
+    "mslearn": {
+      "type": "http",
+      "url": "https://learn.microsoft.com/api/mcp",
+      "tools": ["*"]
+    }
+  }
+}
+```
+
+4. Click **Save**
+
+This configuration enables all tools from the Microsoft Learn MCP Server:
+- `microsoft_docs_search` - Search Microsoft documentation
+- `microsoft_docs_fetch` - Fetch complete documentation pages
+- `microsoft_code_sample_search` - Find official code examples
+
+#### Step 2: Test MCP Configuration
+
+After adding the MCP configuration:
+
+1. Create a test issue in your repository
+2. Assign the issue to Copilot (or use the workflow)
+3. Check the agent logs by clicking "View session" when the agent starts working
+4. Click the `...` menu → `Copilot` → expand "Start MCP Servers" step
+5. Verify that `mslearn` tools are listed
+
+**Example task to test Microsoft Learn integration:**
+
+```bash
+gh workflow run copilot-agent-task.yml \
+  -f task_description="Create an Azure Function to process HTTP requests using Python, following Microsoft best practices from official documentation"
+```
+
+The agent will automatically use the Microsoft Learn MCP Server to:
+1. Search for Azure Functions documentation
+2. Find official Python code samples
+3. Implement following Microsoft best practices
+4. Include proper error handling and logging patterns
+
+#### Optional: Add Custom MCP Servers
+
+You can add multiple MCP servers for different purposes:
+
+```json
+{
+  "mcpServers": {
+    "mslearn": {
+      "type": "http",
+      "url": "https://learn.microsoft.com/api/mcp",
+      "tools": ["*"]
+    },
+    "sentry": {
+      "type": "local",
+      "command": "npx",
+      "args": ["@sentry/mcp-server@latest"],
+      "tools": ["get_issue_details"],
+      "env": {
+        "SENTRY_ACCESS_TOKEN": "COPILOT_MCP_SENTRY_TOKEN"
+      }
+    }
+  }
+}
+```
+
+**Note:** MCP servers requiring secrets need:
+1. Create a `copilot` environment in repository settings
+2. Add secrets with `COPILOT_MCP_` prefix
+3. Reference them in the MCP configuration `env` section
+
+#### Resources
+
+- [Extending Copilot Agent with MCP](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/extend-coding-agent-with-mcp)
+- [Microsoft Learn MCP Server](https://github.com/MicrosoftDocs/mcp)
+- [Model Context Protocol Specification](https://modelcontextprotocol.io)
+
+## �📁 Project Structure
 
 ```
 .

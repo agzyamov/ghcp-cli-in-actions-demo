@@ -225,7 +225,70 @@ The agent creates a pull request with detailed description:
 **Ready for review!**
 ```
 
-## 📝 Tips for Effective Usage
+## � Using MCP Servers with Coding Agent
+
+### What are MCP Servers?
+
+Model Context Protocol (MCP) servers extend the Copilot Agent's capabilities by providing access to external tools and data sources. This enables more accurate and context-aware code generation.
+
+### Example: Microsoft Learn MCP Server
+
+When you configure the **Microsoft Learn MCP Server** (see [README](README.md#-extending-copilot-agent-with-mcp-servers)), the Copilot Agent can:
+- Search official Microsoft documentation
+- Fetch complete documentation pages
+- Find official Microsoft/Azure code samples
+
+**Example task using Microsoft Learn MCP:**
+
+```bash
+# Agent will search Microsoft docs and use official examples
+gh workflow run copilot-agent-task.yml \
+  -f task_description="Create an Azure Function that processes incoming HTTP requests and stores data in Cosmos DB. Use official Microsoft best practices and error handling patterns."
+```
+
+**What the agent does:**
+1. 🔍 Searches Microsoft Learn for Azure Functions + Cosmos DB documentation
+2. 💻 Fetches official code samples from Microsoft docs
+3. 🏗️ Implements following Microsoft best practices
+4. 📝 Includes proper error handling, logging, and type hints from official examples
+5. ✅ Creates PR with code that matches Microsoft's recommended patterns
+
+**More examples with Microsoft Learn MCP:**
+
+```bash
+# ASP.NET Core implementation
+gh workflow run copilot-agent-task.yml \
+  -f task_description="Create a minimal API in ASP.NET Core with JWT authentication following Microsoft's official guidance"
+
+# Azure SDK usage
+gh workflow run copilot-agent-task.yml \
+  -f task_description="Implement Azure Blob Storage operations using the latest Azure SDK for Python with proper async/await patterns"
+
+# .NET best practices
+gh workflow run copilot-agent-task.yml \
+  -f task_description="Refactor this code to use IHttpClientFactory following Microsoft's recommended patterns for resilient HTTP clients"
+```
+
+**Benefits:**
+- ✅ Agent uses up-to-date Microsoft documentation (not stale training data)
+- ✅ Code follows official Microsoft best practices and patterns
+- ✅ Reduced hallucinations on Microsoft-specific APIs
+- ✅ Includes proper error handling from official examples
+
+### Verifying MCP Server Usage
+
+After the agent creates a PR, check the session logs:
+1. Click "View session" in the PR timeline
+2. Click `...` → `Copilot` in the log viewer
+3. Expand "Start MCP Servers" step
+4. Verify `mslearn` tools are loaded
+
+The agent logs will show when it uses MCP tools:
+- `microsoft_docs_search` - Searching for relevant documentation
+- `microsoft_docs_fetch` - Fetching complete documentation pages
+- `microsoft_code_sample_search` - Finding official code examples
+
+## �📝 Tips for Effective Usage
 
 ### For Q&A Workflow
 - Be specific about your technology stack and context
@@ -238,6 +301,7 @@ The agent creates a pull request with detailed description:
 - Mention the programming language and frameworks you're using
 - Specify expected file structure or naming conventions
 - Include any constraints or requirements (performance, security, etc.)
+- **With MCP:** Reference official documentation (e.g., "following Microsoft best practices", "using official Azure examples")
 - Reference existing code patterns when relevant
 
 ### General Best Practices
