@@ -90,7 +90,7 @@ jobs:
           echo "✅ Response committed to branch: copilot-responses"
       
       - name: Upload as Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: copilot-response
           path: response.md
